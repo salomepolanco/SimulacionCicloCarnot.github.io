@@ -1,0 +1,74 @@
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #e6ecf0;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+#container {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 900px;
+}
+
+#sketch-holder {
+  display: flex;
+  justify-content: center;
+}
+
+#controls {
+  margin-top: 20px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 5px;
+}
+
+#info {
+  margin-top: 20px;
+  padding: 15px;
+  background: #e9f7ff;
+  border-left: 5px solid #007bff;
+  border-radius: 5px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+input[type="range"] {
+  width: 250px;
+  height: 8px;
+  background: #ddd;
+  border-radius: 5px;
+  outline: none;
+  -webkit-appearance: none;
+  margin: 10px 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+  background: #0056b3;
+}
+
+.slider-label {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+h2 {
+  color: #007bff;
+  font-size: 20px;
+  margin-bottom: 10px;
+}

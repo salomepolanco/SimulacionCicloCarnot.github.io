@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Simulación Educativa: Eficiencia Térmica con Pistón</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="container">
+      <div id="sketch-holder"></div>
+      <div id="controls"></div>
+      <div id="info">
+        <h2>¿Qué es la Eficiencia Térmica?</h2>
+        <p>
+          La eficiencia térmica (<strong>e</strong>) mide qué tan bien un motor
+          convierte el calor en trabajo útil. Se calcula con la fórmula:
+        </p>
+        <p style="text-align: center; font-size: 16px">
+          e = 1 - T_baja / T_alta
+        </p>
+        <p>
+          Donde <strong>T_alta</strong> y <strong>T_baja</strong> son las
+          temperaturas en Kelvin. En esta simulación, el pistón representa un
+          motor térmico. Ajusta las temperaturas con los deslizadores y observa
+          cómo el movimiento del pistón y las partículas rojas (que simulan la
+          presión del gas) reflejan la eficiencia.
+        </p>
+        <p>
+          <strong>Nota:</strong> Las partículas rojas debajo del pistón
+          representan el gas caliente. Su movimiento continuo simula la presión
+          que impulsa el pistón, intensificándose con mayor eficiencia.
+        </p>
+      </div>
+    </div>
+    <script>
+      let tAlta = 500; // Temperatura alta inicial (Kelvin)
+      let tBaja = 300; // Temperatura baja inicial (Kelvin)
+      let sliderTAlta, sliderTBaja;
+      let efficiency = 0;
+      let pistonY = 0; // Posición del pistón
+      let time = 0; // Para animación
+      let particles = []; // Partículas de gas
+      let crankAngle = 0; // Ángulo del cigüeñal
+      let controls; // Referencia al DOM
+
+      function preload() {
+        // Asegurar que el DOM esté cargado antes de seleccionar elementos
+        controls = select("#controls");
+      }
+
+      function setup() {
+        let canvas = createCanvas(600, 500);
+        canvas.parent("sketch-holder");
+        textSize(16);
+        textAlign(LEFT);
+        fill(0);
+
+        // Crear sliders
+        sliderTAlta = createSlider(273, 1000, tAlta, 1);
+        sliderTBaja = createSlider(273, 1000, tBaja, 1);
+
+        // Asignar sliders al contenedor de controles
+        if (controls) {
+          sliderTAlta.parent(controls);
+          sliderTBaja.parent(controls);
+        } else {
+          console.error("Elemento #controls no encontrado");
+        }
+
+        // Inicializar partículas
+        for (let i = 0; i < 50; i++) {
+          particles.push({
+            x: random(230, 370),
+            y: random(150, 350),
+            vx: random(-4, 4),
+            vy: random(-4, 4),
+            size: random(8, 12), // Tamaño más grande
+            alpha: random(150, 255), // Transparencia variable
+          });
+        }
+
+        // Calcular eficiencia inicial
+        calculateEfficiency();
+      }
+
+      function calculateEfficiency() {
+        tAlta = sliderTAlta.value();
+        tBaja = sliderTBaja.value();
+        if (tAlta > tBaja) {
+          efficiency = 1 - tBaja / tAlta;
+        } else {
+          efficiency = 0; // Evitar divisiones inválidas
+        }
+      }
+
+      function draw() {
+        background(255);
+
+        // Actualizar eficiencia
+        calculateEfficiency();
+
+        // Dibujar cilindro con textura metálica
+        fill(170, 170, 190);
+        rect(200, 50, 200, 300, 15); // Cilindro grande
+        fill(140, 140, 160);
+        rect(190, 40, 220, 15, 5); // Tapa superior
+        rect(190, 340, 220, 15, 5); // Tapa inferior
+        fill(200, 200, 220, 80);
+        rect(200, 50, 100, 300); // Sombra interna
+
+        // Calcular posición del pistón
+        let amplitude = efficiency * 100; // Amplitud del movimiento
+        pistonY = 200 + amplitude * sin(time); // Centro en y=200
+        time += 0.08 * (efficiency + 0.2); // Velocidad mínima incluso con eficiencia baja
+        crankAngle = time; // Sincronizar cigüeñal
+
+        // Dibujar pistón con detalles
+        fill(80, 80, 120);
+        rect(210, pistonY - 30, 180, 60, 8); // Pistón grande
+        fill(60, 60, 100);
+        rect(280, pistonY - 50, 40, 20, 5); // Conector biela
+        stroke(50);
+        line(300, pistonY - 30, 300, pistonY - 50); // Conexión
+        noStroke();
+
+        // Dibujar cigüeñal
+        push();
+        translate(300, 380); // Centro del cigüeñal
+        rotate(crankAngle);
+        fill(100);
+        ellipse(0, 0, 40, 40); // Disco central
+        rect(-10, 0, 20, 80); // Brazo del cigüeñal
+        fill(80);
+        ellipse(0, 40, 20, 20); // Perno
+        pop();
+        stroke(50);
+        line(300, pistonY - 30, 300, 360 + 40 * sin(crankAngle)); // Biela
+        noStroke();
+
+        // Actualizar y dibujar partículas de gas (burbujitas rojas)
+        for (let p of particles) {
+          // Ajustar velocidad con un mínimo para movimiento continuo
+          let speedFactor = efficiency + 0.3; // Mínimo para evitar asentamiento
+          p.x += p.vx * speedFactor;
+          p.y += p.vy * speedFactor;
+
+          // Rebote en pistón
+          if (p.y > pistonY + 30) {
+            p.vy = -abs(p.vy); // Rebote elástico
+            p.y = pistonY + 30; // Evitar atravesar pistón
+          }
+          // Rebote en tapa superior
+          if (p.y < 50) {
+            p.vy = abs(p.vy);
+            p.y = 50; // Evitar salir del cilindro
+          }
+          // Rebote en paredes laterales
+          if (p.x < 230) {
+            p.vx = abs(p.vx);
+            p.x = 230;
+          } else if (p.x > 370) {
+            p.vx = -abs(p.vx);
+            p.x = 370;
+          }
+
+          // Dibujar partículas con efecto de brillo
+          fill(255, 80 + efficiency * 175, 80, p.alpha);
+          ellipse(p.x, p.y, p.size, p.size);
+          fill(255, 100 + efficiency * 155, 100, p.alpha * 0.5);
+          ellipse(p.x, p.y, p.size * 1.5, p.size * 1.5); // Halo
+        }
+
+        // Mostrar información
+        fill(0);
+        text("Eficiencia: " + nf(efficiency * 100, 1, 2) + "%", 450, 100);
+        text("T_alta: " + tAlta + " K", 450, 50);
+        text("T_baja: " + tBaja + " K", 450, 150);
+
+        // Actualizar etiquetas de sliders
+        if (controls) {
+          controls.html(`
+            <div class="slider-label">Ajustar T_alta: ${tAlta} K</div>
+            <div class="slider-label">Ajustar T_baja: ${tBaja} K</div>
+          `);
+          sliderTAlta.parent(controls);
+          sliderTBaja.parent(controls);
+        }
+      }
+    </script>
+  </body>
+</html>
