@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ciclo de Carnot</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Ciclo de Carnot</h2>
+      <div class="subtitle">
+        Universidad de las Fuerzas Armadas ESPE<br />
+        Termodinámica — Ing. <br />
+        Integrantes: Itaty Polanco, <br />
+        Junio 2025
+      </div>
+      <div class="card">
+        <div class="form-section-title">Parámetros del Ciclo de Carnot</div>
+        <div class="form-section-desc">
+          Ingresa los valores para simular y analizar el ciclo de Carnot. Puedes
+          modificar cualquier parámetro y ver los resultados en tiempo real.
+        </div>
+        <form id="carnotForm" autocomplete="off">
+          <div class="form-grid">
+            <div class="form-group">
+              <span class="form-icon">🧪</span><label for="n">n (moles):</label
+              ><input type="number" id="n" value="1" step="any" required />
+            </div>
+            <div class="form-group">
+              <span class="form-icon">⚗️</span
+              ><label for="R">R (J/(mol·K)):</label
+              ><input type="number" id="R" value="8.314" step="any" required />
+            </div>
+            <div class="form-group">
+              <span class="form-icon">🔥</span
+              ><label for="Th">T<sub>h</sub> (K, temp. alta):</label
+              ><input type="number" id="Th" value="500" step="any" required />
+            </div>
+            <div class="form-group">
+              <span class="form-icon">❄️</span
+              ><label for="Tc">T<sub>c</sub> (K, temp. baja):</label
+              ><input type="number" id="Tc" value="300" step="any" required />
+            </div>
+            <div class="form-group">
+              <span class="form-icon">🔹</span
+              ><label for="V1">V<sub>1</sub> (L, vol. inicial):</label
+              ><input type="number" id="V1" value="1" step="any" required />
+            </div>
+            <div class="form-group">
+              <span class="form-icon">🔸</span
+              ><label for="V2"
+                >V<sub>2</sub> (L, después de exp. isotérmica):</label
+              ><input type="number" id="V2" value="2" step="any" required />
+            </div>
+            <div class="form-group">
+              <span class="form-icon">🔸</span
+              ><label for="V3"
+                >V<sub>3</sub> (L, después de exp. adiabática):</label
+              ><input type="number" id="V3" value="4" step="any" required />
+            </div>
+          </div>
+          <div class="form-btn-row">
+            <button type="submit">Graficar</button>
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <div id="grafica"></div>
+      </div>
+      <div class="card card-sim">
+        <div class="sim-title">Simulación del Pistón (Ciclo de Carnot)</div>
+        <canvas id="simulacionPiston" width="700" height="320"></canvas>
+
+        <!-- Controles de simulación -->
+        <div style="text-align: center; margin-top: 16px">
+          <button
+            onclick="pausarAnimacion()"
+            style="
+              padding: 8px 20px;
+              margin: 0 8px;
+              border-radius: 6px;
+              border: none;
+              background: linear-gradient(90deg, #ff5e62, #ff9966);
+              color: white;
+              font-weight: bold;
+              cursor: pointer;
+              box-shadow: 0 2px 8px #ff5e6222;
+              transition: all 0.2s;
+            "
+            onmouseover="this.style.transform='scale(1.05)'"
+            onmouseout="this.style.transform='scale(1)'"
+          >
+            ⏸️ Pausar
+          </button>
+
+          <button
+            onclick="reiniciarAnimacion()"
+            style="
+              padding: 8px 20px;
+              margin: 0 8px;
+              border-radius: 6px;
+              border: none;
+              background: linear-gradient(90deg, #36d1c4, #1e90ff);
+              color: white;
+              font-weight: bold;
+              cursor: pointer;
+              box-shadow: 0 2px 8px #1e90ff22;
+              transition: all 0.2s;
+            "
+            onmouseover="this.style.transform='scale(1.05)'"
+            onmouseout="this.style.transform='scale(1)'"
+          >
+            🔄 Reiniciar
+          </button>
+        </div>
+
+        <div
+          style="
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            border-left: 4px solid #1e90ff;
+            font-size: 0.95em;
+            color: #555;
+          "
+        >
+          <strong>💡 Información de la simulación:</strong><br />
+          • <strong>Expansión isotérmica:</strong> El gas se expande absorbiendo
+          calor de la placa caliente<br />
+          • <strong>Expansión adiabática:</strong> El gas se expande sin
+          intercambio de calor<br />
+          • <strong>Compresión isotérmica:</strong> El gas se comprime
+          expulsando calor a la placa fría<br />
+          • <strong>Compresión adiabática:</strong> El gas se comprime sin
+          intercambio de calor<br />
+          • Las partículas cambian de color según la temperatura (rojo =
+          caliente, azul = frío)
+        </div>
+      </div>
+      <div class="card">
+        <h3>Resultados numéricos</h3>
+        <div
+          id="resultados-carnot"
+          style="
+            background: #f9f9fc;
+            border: 1px solid #b0b0c0;
+            border-radius: 8px;
+            padding: 12px 18px;
+            max-width: 340px;
+            font-size: 0.98em;
+            margin: 10px 0 0 0;
+            box-shadow: 0 2px 8px #0001;
+          "
+        ></div>
+      </div>
+      <div class="card">
+        <h3>Fórmulas del Ciclo de Carnot</h3>
+        <div class="formulas-grid" id="formulas-carnot">
+          <div class="formula-item">
+            <b>Trabajo en expansión isotérmica:</b><br />\[ W_{12} = nRT_H
+            \ln\left(\frac{V_2}{V_1}\right) \]
+          </div>
+          <div class="formula-item">
+            <b>Trabajo en expansión adiabática:</b><br />\[ W_{23} = \frac{P_3
+            V_3 - P_2 V_2}{\gamma - 1} \]
+          </div>
+          <div class="formula-item">
+            <b>Trabajo en compresión isotérmica:</b><br />\[ W_{34} = nRT_C
+            \ln\left(\frac{V_4}{V_3}\right) \]
+          </div>
+          <div class="formula-item">
+            <b>Trabajo en compresión adiabática:</b><br />\[ W_{41} = \frac{P_1
+            V_1 - P_4 V_4}{\gamma - 1} \]
+          </div>
+          <div class="formula-item">
+            <b>Trabajo neto del ciclo:</b><br />\[ W_{neto} = W_{12} + W_{23} +
+            W_{34} + W_{41} \]
+          </div>
+          <div class="formula-item">
+            <b>Calor suministrado:</b><br />\[ Q_{in} = nRT_H
+            \ln\left(\frac{V_2}{V_1}\right) \]
+          </div>
+          <div class="formula-item">
+            <b>Cambio de entropía durante la expulsión de calor:</b><br />\[
+            \Delta S_{out} = \frac{Q_{out}}{T_C} \]<br />
+            donde \( Q_{out} = nRT_C \ln\left(\frac{V_3}{V_2}\right) \)
+          </div>
+          <div class="formula-item">
+            <b>Rendimiento térmico:</b><br />\[ \eta = 1 - \frac{T_C}{T_H} \]
+          </div>
+        </div>
+      </div>
+
+      dsds
+    </div>
+    <script src="carnot.js"></script>
+  </body>
+</html>
