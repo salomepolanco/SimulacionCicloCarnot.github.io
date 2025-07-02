@@ -10,198 +10,599 @@
       async
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
     ></script>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      .tab {
+        display: none;
+      }
+      .tab.active {
+        display: block;
+      }
+      .tabs button {
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+      body.bg-light-green {
+        background: #e6fff2 !important;
+      }
+      .bg-green-light {
+        background: #b2f2d7 !important;
+        border-radius: 16px;
+      }
+      .text-green-dark {
+        color: #184d2b !important;
+      }
+      .text-green-vivid {
+        color: #38b000 !important;
+      }
+      .resultados-carnot {
+        background: #b2f2d7;
+        color: #184d2b;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px #0001;
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 24px 32px 18px 32px;
+        text-align: center;
+        font-size: 1.08em;
+        border: 2.5px solid #38b000;
+      }
+      .resultados-carnot hr {
+        border: none;
+        border-top: 1.5px solid #38b000;
+        margin: 16px 0;
+      }
+      .resultados-carnot b,
+      .resultados-carnot strong {
+        color: #38b000;
+      }
+      .carnot-formulas {
+        background: #d3ffe6;
+        color: #184d2b;
+        border-radius: 10px;
+        border-left: 6px solid #38b000;
+        box-shadow: 0 2px 8px #0001;
+        max-width: 480px;
+        margin: 24px auto 0 auto;
+        padding: 18px 28px 14px 28px;
+        font-size: 1.05em;
+        text-align: left;
+      }
+      .carnot-formulas ul {
+        margin: 10px 0 0 0;
+        padding-left: 20px;
+      }
+      .carnot-formulas li {
+        margin-bottom: 6px;
+      }
+      .card {
+        border-radius: 16px !important;
+      }
+      .form-section-title {
+        font-size: 1.18em;
+        font-weight: bold;
+        color: #38b000;
+        margin-bottom: 6px;
+        letter-spacing: 0.5px;
+        text-align: center;
+      }
+      .form-section-desc {
+        font-size: 1em;
+        color: #184d2b;
+        margin-bottom: 18px;
+        text-align: center;
+      }
+      .subtitle {
+        color: #184d2b;
+        font-size: 1.08em;
+      }
+      .btn-success,
+      .btn-outline-success {
+        background: linear-gradient(90deg, #38b000 60%, #70e000 100%);
+        border: none;
+        color: #fff !important;
+        font-weight: 600;
+        box-shadow: 0 2px 8px #38b00022;
+        transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+      }
+      .btn-success:hover,
+      .btn-outline-success:hover {
+        background: linear-gradient(90deg, #70e000 60%, #38b000 100%);
+        color: #fff !important;
+        box-shadow: 0 4px 16px #38b00033;
+        transform: translateY(-2px) scale(1.04);
+      }
+      .btn-outline-success {
+        background: #e6fff2;
+        color: #38b000 !important;
+        border: 2px solid #38b000;
+      }
+      .btn:active {
+        transform: scale(0.98);
+      }
+    </style>
   </head>
-  <body>
-    <div class="container">
-      <h2>Ciclo de Carnot</h2>
-      <div class="subtitle">
+  <body class="bg-light-green">
+    <div class="container py-4">
+      <h2 class="text-center text-green-vivid mb-3">Ciclo de Carnot</h2>
+      <div class="subtitle text-center mb-3">
         Universidad de las Fuerzas Armadas ESPE<br />
         Físico Química — Ing. Raquel Zúñiga <br />
         Integrantes: Polanco Itaty, Guanopatín Elizabeth, Benavides Carlos,
         Gusqui Gabriel <br />
         Junio 2025
       </div>
-      <div class="card">
-        <div class="form-section-title">Parámetros del Ciclo de Carnot</div>
-        <div class="form-section-desc">
+      <div class="card shadow-lg p-4 mb-4 bg-green-light text-green-dark">
+        <div class="form-section-title text-green-vivid text-center mb-2">
+          Parámetros del Ciclo de Carnot
+        </div>
+        <div class="form-section-desc text-center mb-3">
           Ingresa los valores para simular y analizar el ciclo de Carnot. Puedes
           modificar cualquier parámetro y ver los resultados en tiempo real.
         </div>
-        <form id="carnotForm" autocomplete="off">
-          <div class="form-grid">
-            <div class="form-group">
-              <span class="form-icon">🧪</span><label for="n">n (moles):</label
-              ><input type="number" id="n" value="1" step="any" required />
-            </div>
-            <div class="form-group">
-              <span class="form-icon">⚗️</span
-              ><label for="R">R (J/(mol·K)):</label
-              ><input type="number" id="R" value="8.314" step="any" required />
-            </div>
-            <div class="form-group">
-              <span class="form-icon">🔥</span
-              ><label for="Th">T<sub>h</sub> (K, temp. alta):</label
-              ><input type="number" id="Th" value="500" step="any" required />
-            </div>
-            <div class="form-group">
-              <span class="form-icon">❄️</span
-              ><label for="Tc">T<sub>c</sub> (K, temp. baja):</label
-              ><input type="number" id="Tc" value="300" step="any" required />
-            </div>
-            <div class="form-group">
-              <span class="form-icon">🔹</span
-              ><label for="V1">V<sub>1</sub> (L, vol. inicial):</label
-              ><input type="number" id="V1" value="1" step="any" required />
-            </div>
-            <div class="form-group">
-              <span class="form-icon">🔸</span
-              ><label for="V2"
-                >V<sub>2</sub> (L, después de exp. isotérmica):</label
-              ><input type="number" id="V2" value="2" step="any" required />
-            </div>
-            <div class="form-group">
-              <span class="form-icon">🔸</span
-              ><label for="V3"
-                >V<sub>3</sub> (L, después de exp. adiabática):</label
-              ><input type="number" id="V3" value="4" step="any" required />
-            </div>
-          </div>
-          <div class="form-btn-row">
-            <button type="submit">Graficar</button>
-          </div>
-        </form>
-      </div>
-      <div class="card">
-        <div id="grafica"></div>
-      </div>
-      <div class="card card-sim">
-        <div class="sim-title">Simulación del Pistón (Ciclo de Carnot)</div>
-        <canvas id="simulacionPiston" width="700" height="320"></canvas>
+        <label
+          >T<sub>1</sub> (K): <input type="number" id="T1" value="600" /></label
+        ><br />
+        <label
+          >V<sub>1</sub> (L): <input type="number" id="V1" value="10" /></label
+        ><br />
+        <p><strong>ℹ️ Eficiencia asumida: η = 75% (T₂ = 0.25 × T₁)</strong></p>
 
-        <!-- Controles de simulación -->
-        <div style="text-align: center; margin-top: 16px">
-          <button
-            onclick="pausarAnimacion()"
-            style="
-              padding: 8px 20px;
-              margin: 0 8px;
-              border-radius: 6px;
-              border: none;
-              background: linear-gradient(90deg, #ff5e62, #ff9966);
-              color: white;
-              font-weight: bold;
-              cursor: pointer;
-              box-shadow: 0 2px 8px #ff5e6222;
-              transition: all 0.2s;
-            "
-            onmouseover="this.style.transform='scale(1.05)'"
-            onmouseout="this.style.transform='scale(1)'"
-          >
-            ⏸️ Pausar
-          </button>
+        <label
+          >Gas:
+          <select id="gas">
+            <option value="H2">H₂</option>
+            <option value="O2">O₂</option>
+            <option value="N2">N₂</option>
+            <option value="Cl2">Cl₂</option>
+            <option value="Br2">Br₂</option>
+            <option value="H2O">H₂O</option>
+            <option value="CO">CO</option>
+            <option value="CO2">CO₂</option>
+            <option value="NH3">NH₃</option>
+            <option value="SO2">SO₂</option>
+            <option value="H2S">H₂S</option>
+            <option value="SO3">SO₃</option>
+            <option value="CH">CH</option>
+            <option value="C2H">C₂H</option>
+            <option value="C2H6">C₂H₆</option>
+          </select> </label
+        ><br />
 
-          <button
-            onclick="reiniciarAnimacion()"
-            style="
-              padding: 8px 20px;
-              margin: 0 8px;
-              border-radius: 6px;
-              border: none;
-              background: linear-gradient(90deg, #36d1c4, #1e90ff);
-              color: white;
-              font-weight: bold;
-              cursor: pointer;
-              box-shadow: 0 2px 8px #1e90ff22;
-              transition: all 0.2s;
-            "
-            onmouseover="this.style.transform='scale(1.05)'"
-            onmouseout="this.style.transform='scale(1)'"
-          >
-            🔄 Reiniciar
-          </button>
-        </div>
-
-        <div
-          style="
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 16px;
-            border-left: 4px solid #1e90ff;
-            font-size: 0.95em;
-            color: #555;
-          "
+        <label>Cantidad: <input type="number" id="cantidad" value="1" /></label>
+        <label
+          ><input type="radio" name="unidad" value="moles" checked />
+          Moles</label
         >
-          <strong>💡 Información de la simulación:</strong><br />
-          • <strong>Expansión isotérmica:</strong> El gas se expande absorbiendo
-          calor de la placa caliente<br />
-          • <strong>Expansión adiabática:</strong> El gas se expande sin
-          intercambio de calor<br />
-          • <strong>Compresión isotérmica:</strong> El gas se comprime
-          expulsando calor a la placa fría<br />
-          • <strong>Compresión adiabática:</strong> El gas se comprime sin
-          intercambio de calor<br />
-          • Las partículas cambian de color según la temperatura (rojo =
-          caliente, azul = frío)
+        <label><input type="radio" name="unidad" value="gramos" /> Gramos</label
+        ><br />
+
+        <div class="tabs">
+          <button onclick="showTab('r')">Usar r = V₂/V₁</button>
+          <button onclick="showTab('eta')">Usar eficiencia η</button>
+          <button onclick="showTab('v3v4')">Usar V₃/V₄</button>
+        </div>
+
+        <div id="tab-r" class="tab active">
+          <label
+            >Relación r = V₂ / V₁: <input type="number" id="r" value="2.5"
+          /></label>
+        </div>
+        <div id="tab-eta" class="tab">
+          <label
+            >Eficiencia η (0-1):
+            <input type="number" id="eta" value="0.75" step="0.01"
+          /></label>
+        </div>
+        <div id="tab-v3v4" class="tab">
+          <label
+            >Relación V₃ / V₄: <input type="number" id="v3v4" value="2.5"
+          /></label>
+        </div>
+
+        <div class="text-center mb-3">
+          <button
+            class="btn btn-success rounded-pill px-4 py-2 mb-2"
+            onclick="graficarCarnot()"
+          >
+            Generar Gráfico
+          </button>
+          <button
+            class="btn btn-outline-success rounded-pill px-4 py-2 mb-2"
+            onclick="mostrarResultados()"
+          >
+            Mostrar Parámetros Calculados
+          </button>
         </div>
       </div>
-      <div class="card">
-        <h3>Resultados numéricos</h3>
+      <div class="card shadow-lg p-4 mb-4 bg-green-light text-green-dark">
         <div
-          id="resultados-carnot"
-          style="
-            background: #f9f9fc;
-            border: 1px solid #b0b0c0;
-            border-radius: 8px;
-            padding: 12px 18px;
-            max-width: 340px;
-            font-size: 0.98em;
-            margin: 10px 0 0 0;
-            box-shadow: 0 2px 8px #0001;
-          "
+          id="grafico"
+          style="width: 100%; max-width: 800px; height: 600px; margin: auto"
         ></div>
       </div>
-      <div class="card">
-        <h3>Fórmulas del Ciclo de Carnot</h3>
-        <div class="formulas-grid" id="formulas-carnot">
-          <div class="formula-item">
-            <b>Trabajo en expansión isotérmica:</b><br />\[ W_{12} = nRT_H
-            \ln\left(\frac{V_2}{V_1}\right) \]
-          </div>
-          <div class="formula-item">
-            <b>Trabajo en expansión adiabática:</b><br />\[ W_{23} = \frac{P_3
-            V_3 - P_2 V_2}{\gamma - 1} \]
-          </div>
-          <div class="formula-item">
-            <b>Trabajo en compresión isotérmica:</b><br />\[ W_{34} = nRT_C
-            \ln\left(\frac{V_4}{V_3}\right) \]
-          </div>
-          <div class="formula-item">
-            <b>Trabajo en compresión adiabática:</b><br />\[ W_{41} = \frac{P_1
-            V_1 - P_4 V_4}{\gamma - 1} \]
-          </div>
-          <div class="formula-item">
-            <b>Trabajo neto del ciclo:</b><br />\[ W_{neto} = W_{12} + W_{23} +
-            W_{34} + W_{41} \]
-          </div>
-          <div class="formula-item">
-            <b>Calor suministrado:</b><br />\[ Q_{in} = nRT_H
-            \ln\left(\frac{V_2}{V_1}\right) \]
-          </div>
-          <div class="formula-item">
-            <b>Cambio de entropía durante la expulsión de calor:</b><br />\[
-            \Delta S_{out} = \frac{Q_{out}}{T_C} \]<br />
-            donde \( Q_{out} = nRT_C \ln\left(\frac{V_3}{V_2}\right) \)
-          </div>
-          <div class="formula-item">
-            <b>Rendimiento térmico:</b><br />\[ \eta = 1 - \frac{T_C}{T_H} \]
-          </div>
+      <div class="card shadow-lg p-4 mb-4 bg-green-light text-green-dark">
+        <div id="resultados" class="resultados-carnot"></div>
+        <div class="carnot-formulas mt-3"></div>
+      </div>
+      <div class="card shadow-lg p-4 mb-4 bg-green-light text-green-dark">
+        <h3 class="text-center text-green-vivid mb-3">
+          Simulación del Pistón de Carnot
+        </h3>
+        <canvas
+          id="pistonCanvas"
+          width="400"
+          height="320"
+          class="d-block mx-auto mb-3"
+        ></canvas>
+        <div class="text-center small text-green-dark">
+          Animación visual de las etapas del ciclo de Carnot: expansión y
+          compresión isotérmica y adiabática, con partículas rebotando dentro
+          del cilindro.<br />
+          La placa fría se muestra en azul durante la compresión isotérmica.
         </div>
       </div>
-
-      dsds
     </div>
-    <script src="carnot.js"></script>
+
+    <script>
+      const gases = {
+        H2: 2.016,
+        O2: 32.0,
+        N2: 28.02,
+        Cl2: 70.9,
+        Br2: 159.8,
+        H2O: 18.015,
+        CO: 28.01,
+        CO2: 44.01,
+        NH3: 17.03,
+        SO2: 64.07,
+        H2S: 34.08,
+        SO3: 80.06,
+        CH: 13.02,
+        C2H: 25.03,
+        C2H6: 30.07,
+      };
+
+      let valores = {};
+
+      function showTab(tab) {
+        document
+          .querySelectorAll(".tab")
+          .forEach((el) => el.classList.remove("active"));
+        document.getElementById("tab-" + tab).classList.add("active");
+      }
+
+      function graficarCarnot() {
+        const R = 8.314,
+          gamma = 1.4,
+          steps = 100;
+        const T1 = parseFloat(document.getElementById("T1").value);
+        const V1_L = parseFloat(document.getElementById("V1").value);
+        const V1_m3 = V1_L / 1000;
+
+        const gas = document.getElementById("gas").value;
+        const pesoMol = gases[gas];
+        const unidad = document.querySelector(
+          'input[name="unidad"]:checked'
+        ).value;
+        const cantidad = parseFloat(document.getElementById("cantidad").value);
+        const n = unidad === "gramos" ? cantidad / pesoMol : cantidad;
+
+        let alpha = 0.25;
+        let T2, V2_m3, V3_m3, V4_m3;
+
+        if (document.getElementById("tab-r").classList.contains("active")) {
+          const r = parseFloat(document.getElementById("r").value);
+          T2 = alpha * T1;
+          V2_m3 = r * V1_m3;
+        } else if (
+          document.getElementById("tab-eta").classList.contains("active")
+        ) {
+          const eta = parseFloat(document.getElementById("eta").value);
+          alpha = 1 - eta;
+          T2 = alpha * T1;
+          const r = 2.5;
+          V2_m3 = r * V1_m3;
+        } else {
+          const v3v4 = parseFloat(document.getElementById("v3v4").value);
+          T2 = T1 / Math.pow(v3v4, gamma - 1);
+          alpha = T2 / T1;
+          const r = 2.5;
+          V2_m3 = r * V1_m3;
+        }
+
+        V3_m3 = V2_m3 * Math.pow(T1 / T2, 1 / (gamma - 1));
+        V4_m3 = V1_m3 * Math.pow(T1 / T2, 1 / (gamma - 1));
+
+        const V2_L = V2_m3 * 1000;
+        const V3_L = V3_m3 * 1000;
+        const V4_L = V4_m3 * 1000;
+        valores = { T2, V2_L, V3_L, V4_L };
+
+        const P_B = (n * R * T1) / V2_m3;
+        const P_D = (n * R * T2) / V4_m3;
+
+        const linspace = (a, b, N) =>
+          Array.from({ length: N }, (_, i) => a + (i / (N - 1)) * (b - a));
+        const V_AB = linspace(V1_L, V2_L, steps);
+        const P_AB = V_AB.map((V) => (n * R * T1) / (V / 1000));
+
+        const V_BC = linspace(V2_L, V3_L, steps);
+        const P_BC = V_BC.map((V) => P_B * Math.pow(V2_L / V, gamma));
+
+        const V_CD = linspace(V3_L, V4_L, steps);
+        const P_CD = V_CD.map((V) => (n * R * T2) / (V / 1000));
+
+        const V_DA = linspace(V4_L, V1_L, steps);
+        const P_DA = V_DA.map((V) => P_D * Math.pow(V4_L / V, gamma));
+
+        const traceAB = {
+          x: V_AB,
+          y: P_AB,
+          name: "Isotérmica T₁",
+          line: { color: "red" },
+        };
+        const traceBC = {
+          x: V_BC,
+          y: P_BC,
+          name: "Adiabática (T₁→T₂)",
+          line: { color: "black", dash: "dot" },
+        };
+        const traceCD = {
+          x: V_CD,
+          y: P_CD,
+          name: "Isotérmica T₂",
+          line: { color: "blue" },
+        };
+        const traceDA = {
+          x: V_DA,
+          y: P_DA,
+          name: "Adiabática (T₂→T₁)",
+          line: { color: "black", dash: "dot" },
+        };
+
+        const layout = {
+          title: "Ciclo de Carnot (volúmenes en litros)",
+          xaxis: { title: "Volumen (L)" },
+          yaxis: { title: "Presión (Pa)" },
+          showlegend: true,
+        };
+
+        Plotly.newPlot("grafico", [traceAB, traceBC, traceCD, traceDA], layout);
+
+        document.getElementById("resultados").innerHTML = "";
+        document.querySelector(".carnot-formulas").innerHTML = `
+          <b>Fórmulas del ciclo de Carnot:</b>
+          <ul>
+            <li>Q<sub>1→2</sub> = nRT₁ ln(V₂/V₁) <span style="opacity:0.7;">(isotérmica expansión)</span></li>
+            <li>Q<sub>2→3</sub> = 0 <span style="opacity:0.7;">(adiabática)</span></li>
+            <li>Q<sub>3→4</sub> = nRT₂ ln(V₄/V₃) <span style="opacity:0.7;">(isotérmica compresión)</span></li>
+            <li>Q<sub>4→1</sub> = 0 <span style="opacity:0.7;">(adiabática)</span></li>
+            <li><b>Q<sub>total</sub> = Q<sub>1→2</sub> + Q<sub>2→3</sub> + Q<sub>3→4</sub> + Q<sub>4→1</sub></b></li>
+          </ul>
+        `;
+      }
+
+      function mostrarResultados() {
+        if (!valores.T2) {
+          alert("Primero presiona 'Generar Gráfico'");
+          return;
+        }
+
+        const T2 = valores.T2;
+        const V2 = valores.V2_L;
+        const V3 = valores.V3_L;
+        const V4 = valores.V4_L;
+
+        const R = 8.314;
+        const n = 1; // Assuming n = 1 for simplicity
+
+        const Q12 = n * R * T1 * Math.log(V2 / V1);
+        const Q23 = 0;
+        const Q34 = n * R * T2 * Math.log(V4 / V3);
+        const Q41 = 0;
+        const Qtotal = Q12 + Q23 + Q34 + Q41;
+
+        document.getElementById("resultados").innerHTML = `
+          <strong>Parámetros calculados:</strong><br>
+          T₂ = <b>${T2.toFixed(2)} K</b><br>
+          V₂ = <b>${V2.toFixed(2)} L</b><br>
+          V₃ = <b>${V3.toFixed(2)} L</b><br>
+          V₄ = <b>${V4.toFixed(2)} L</b><br>
+          <hr>
+          <strong>Calor en cada etapa:</strong><br>
+          Q<sub>1→2</sub> (isotérmica expansión): <b>${Q12.toFixed(2)} J</b><br>
+          Q<sub>2→3</sub> (adiabática): <b>${Q23.toFixed(2)} J</b><br>
+          Q<sub>3→4</sub> (isotérmica compresión): <b>${Q34.toFixed(
+            2
+          )} J</b><br>
+          Q<sub>4→1</sub> (adiabática): <b>${Q41.toFixed(2)} J</b><br>
+          <span style="color:#38b000; font-weight:bold;">Q<sub>total</sub> = ${Qtotal.toFixed(
+            2
+          )} J</span>
+        `;
+      }
+
+      window.onload = function () {
+        graficarCarnot();
+      };
+    </script>
+
+    <script>
+      (function () {
+        let pistonAnimFrame = null;
+
+        function simularPiston() {
+          if (pistonAnimFrame) cancelAnimationFrame(pistonAnimFrame);
+
+          const canvas = document.getElementById("pistonCanvas");
+          if (!canvas) return;
+          const ctx = canvas.getContext("2d");
+
+          // Volúmenes de ejemplo si no hay ciclo calculado
+          const vols =
+            window.volumenes && window.volumenes.length === 5
+              ? window.volumenes
+              : [10, 25, 40, 25, 10];
+
+          const etapas = [
+            {
+              nombre: "Expansión isotérmica",
+              color: "#e74c3c",
+              placa: "caliente",
+            },
+            { nombre: "Expansión adiabática", color: "#ffb347", placa: null },
+            {
+              nombre: "Compresión isotérmica",
+              color: "#1e90ff",
+              placa: "fria",
+            },
+            { nombre: "Compresión adiabática", color: "#43e97b", placa: null },
+          ];
+
+          let etapa = 0;
+          let t = 0;
+          const duracionEtapa = 80;
+          let particulas = [];
+
+          function resetParticulas(vol) {
+            particulas = [];
+            const area = getCilindroArea(vol);
+            for (let i = 0; i < 20; i++) {
+              particulas.push({
+                x: area.x + 10 + Math.random() * (area.w - 20),
+                y: area.y + 10 + Math.random() * (area.h - 20),
+                vx: (Math.random() - 0.5) * 1.2,
+                vy: (Math.random() - 0.5) * 1.2,
+                radio: 4 + Math.random() * 2,
+              });
+            }
+          }
+
+          function getCilindroArea(vol) {
+            const minH = 60,
+              maxH = 220;
+            const minV = Math.min(...vols),
+              maxV = Math.max(...vols);
+            const h = minH + ((maxH - minH) * (vol - minV)) / (maxV - minV);
+            return { x: 120, y: 300 - h, w: 160, h: h };
+          }
+
+          function draw(vol, etapaObj) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const area = getCilindroArea(vol);
+
+            // Cilindro
+            ctx.save();
+            ctx.strokeStyle = "#888";
+            ctx.lineWidth = 5;
+            ctx.strokeRect(area.x, area.y, area.w, area.h);
+            ctx.restore();
+
+            // Placa fría (arriba)
+            if (etapaObj.placa === "fria") {
+              ctx.save();
+              ctx.fillStyle = "#1e90ff";
+              ctx.fillRect(area.x, area.y - 28, area.w, 16);
+              ctx.font = "bold 13px Arial";
+              ctx.fillStyle = "#fff";
+              ctx.textAlign = "center";
+              ctx.fillText("Placa fría", area.x + area.w / 2, area.y - 16);
+              ctx.restore();
+            }
+
+            // Pistón (parte superior del cilindro)
+            ctx.save();
+            ctx.fillStyle = "#aaa";
+            ctx.fillRect(area.x, area.y - 10, area.w, 12);
+            ctx.restore();
+
+            // Partículas
+            for (let p of particulas) {
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.radio, 0, 2 * Math.PI);
+              ctx.fillStyle = etapaObj.placa === "fria" ? "#1e90ff" : "#e74c3c";
+              ctx.globalAlpha = 0.8;
+              ctx.fill();
+              ctx.restore();
+            }
+
+            // Nombre de la etapa
+            ctx.save();
+            ctx.font = "bold 16px Arial";
+            ctx.fillStyle = etapaObj.color;
+            ctx.fillText(etapaObj.nombre, 20, 30);
+            ctx.restore();
+
+            // Mostrar temperaturas en la animación
+            ctx.save();
+            ctx.font = "bold 15px Arial";
+            ctx.fillStyle = "#222";
+            const T1 = parseFloat(document.getElementById("T1").value);
+            const T2 =
+              window.valores && window.valores.T2
+                ? window.valores.T2
+                : Math.round(T1 * 0.25);
+            ctx.fillText(`T₁ = ${T1} K`, 260, 30);
+            ctx.fillText(`T₂ = ${T2} K`, 260, 50);
+            ctx.restore();
+          }
+
+          function updateParticulas(vol) {
+            const area = getCilindroArea(vol);
+            for (let p of particulas) {
+              p.x += p.vx;
+              p.y += p.vy;
+              if (p.x < area.x + p.radio) {
+                p.x = area.x + p.radio;
+                p.vx *= -1;
+              }
+              if (p.x > area.x + area.w - p.radio) {
+                p.x = area.x + area.w - p.radio;
+                p.vx *= -1;
+              }
+              if (p.y < area.y + p.radio) {
+                p.y = area.y + p.radio;
+                p.vy *= -1;
+              }
+              if (p.y > area.y + area.h - p.radio) {
+                p.y = area.y + area.h - p.radio;
+                p.vy *= -1;
+              }
+            }
+          }
+
+          function animar() {
+            const etapaObj = etapas[etapa];
+            const v0 = vols[etapa],
+              v1 = vols[etapa + 1];
+            const vol = v0 + ((v1 - v0) * t) / duracionEtapa;
+            if (t === 0) resetParticulas(vol);
+            updateParticulas(vol);
+            draw(vol, etapaObj);
+
+            t++;
+            if (t > duracionEtapa) {
+              etapa = (etapa + 1) % 4;
+              t = 0;
+            }
+            pistonAnimFrame = requestAnimationFrame(animar);
+          }
+
+          animar();
+        }
+
+        // Iniciar la animación automáticamente al cargar la página
+        window.addEventListener("DOMContentLoaded", simularPiston);
+
+        // Si quieres reiniciar la animación al cambiar parámetros, llama a simularPiston() después de actualizar 'volumenes'
+      })();
+    </script>
   </body>
 </html>
