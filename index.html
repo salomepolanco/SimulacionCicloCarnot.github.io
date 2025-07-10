@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ciclo de Carnot</title>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .bg-light-green {
+        background: #e6fff2 !important;
+      }
+      .bg-green-light {
+        background: #b2f2d7 !important;
+        border-radius: 16px;
+      }
+      .text-green-dark {
+        color: #184d2b !important;
+      }
+      .text-green-vivid {
+        color: #38b000 !important;
+      }
+      .resultados-carnot {
+        background: #b2f2d7;
+        color: #184d2b;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px #0001;
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 24px 32px 18px 32px;
+        text-align: center;
+        font-size: 1.08em;
+        border: 2.5px solid #38b000;
+      }
+      .resultados-carnot hr {
+        border: none;
+        border-top: 1.5px solid #38b000;
+        margin: 16px 0;
+      }
+      .resultados-carnot b,
+      .resultados-carnot strong {
+        color: #38b000;
+      }
+      .carnot-formulas {
+        background: #d3ffe6;
+        color: #184d2b;
+        border-radius: 10px;
+        border-left: 6px solid #38b000;
+        box-shadow: 0 2px 8px #0001;
+        max-width: 480px;
+        margin: 24px auto 0 auto;
+        padding: 18px 28px 14px 28px;
+        font-size: 1.05em;
+        text-align: left;
+      }
+      .carnot-formulas ul {
+        margin: 10px 0 0 0;
+        padding-left: 20px;
+      }
+      .carnot-formulas li {
+        margin-bottom: 6px;
+      }
+      .card {
+        border-radius: 16px !important;
+      }
+      .form-section-title {
+        font-size: 1.18em;
+        font-weight: bold;
+        color: #38b000;
+        margin-bottom: 6px;
+        letter-spacing: 0.5px;
+        text-align: center;
+      }
+      .form-section-desc {
+        font-size: 1em;
+        color: #184d2b;
+        margin-bottom: 18px;
+        text-align: center;
+      }
+      .subtitle {
+        color: #184d2b;
+        font-size: 1.08em;
+      }
+      .btn-success,
+      .btn-outline-success {
+        background: linear-gradient(90deg, #38b000 60%, #70e000 100%);
+        border: none;
+        color: #fff !important;
+        font-weight: 600;
+        box-shadow: 0 2px 8px #38b00022;
+        transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+      }
+      .btn-success:hover,
+      .btn-outline-success:hover {
+        background: linear-gradient(90deg, #70e000 60%, #38b000 100%);
+        color: #fff !important;
+        box-shadow: 0 4px 16px #38b00033;
+        transform: translateY(-2px) scale(1.04);
+      }
+      .btn-outline-success {
+        background: #e6fff2;
+        color: #38b000 !important;
+        border: 2px solid #38b000;
+      }
+      .btn:active {
+        transform: scale(0.98);
+      }
+    </style>
+  </head>
+  <body class="bg-light-green">
+    <div class="container py-4">
+      <h2 class="text-center text-green-vivid mb-3">Ciclo de Carnot</h2>
+      <div class="subtitle text-center mb-3">
+        Universidad de las Fuerzas Armadas ESPE<br />
+        Físico Química — Ing. Raquel Zúñiga <br />
+        Integrantes: Polanco Itaty, Guanopatín Elizabeth, Benavides Carlos,
+        Gusqui Gabriel <br />
+        Junio 2025
+      </div>
+      <div class="card shadow-lg p-4 mb-4 bg-green-light text-green-dark">
+        <div class="form-section-title text-green-vivid text-center mb-2">
+          Parámetros del Ciclo de Carnot
+        </div>
+        <div class="form-section-desc text-center mb-3">
+          Ingresa los valores para simular y analizar el ciclo de Carnot.
+        </div>
+        <label
+          >T<sub>alta</sub> (K):
+          <input type="number" id="T_alta" value="600" step="0.1" /></label
+        ><br />
+        <label
+          >T<sub>baja</sub> (K):
+          <input type="number" id="T_baja" value="300" step="0.1" /></label
+        ><br />
+        <label
+          >V<sub>1</sub> (L):
+          <input type="number" id="V1" value="10" step="0.01" /></label
+        ><br />
+        <label
+          >V<sub>2</sub> (L):
+          <input type="number" id="V2" value="25" step="0.01" /></label
+        ><br />
+        <label
+          >Gas:
+          <select id="gas">
+            <!-- Monoatomic -->
+            <optgroup label="Gases Monoatómicos">
+              <option value="He">He (Helio)</option>
+              <option value="Ne">Ne (Neón)</option>
+              <option value="Ar">Ar (Argón)</option>
+              <option value="Kr">Kr (Kriptón)</option>
+              <option value="Xe">Xe (Xenón)</option>
+            </optgroup>
+            <!-- Diatomic -->
+            <optgroup label="Gases Diatómicos">
+              <option value="H2">H₂ (Hidrógeno)</option>
+              <option value="N2">N₂ (Nitrógeno)</option>
+              <option value="O2">O₂ (Oxígeno)</option>
+              <option value="CO">CO (Monóxido de carbono)</option>
+              <option value="HCl">HCl (Cloruro de hidrógeno)</option>
+              <option value="F2">F₂ (Flúor)</option>
+            </optgroup>
+            <!-- Triatomic -->
+            <optgroup label="Gases Triatómicos">
+              <option value="CO2">CO₂ (Dióxido de carbono)</option>
+              <option value="H2O">H₂O (Vapor de agua)</option>
+              <option value="SO2">SO₂ (Dióxido de azufre)</option>
+            </optgroup>
+          </select> </label
+        ><br />
+        <label
+          >Cantidad:
+          <input type="number" id="cantidad" value="1" step="0.01" /></label
+        ><br />
+        <label
+          ><input type="radio" name="unidad" value="moles" checked />
+          Moles</label
+        >
+        <label><input type="radio" name="unidad" value="gramos" /> Gramos</label
+        ><br />
+        <div class="text-center mb-3">
+          <button
+            class="btn btn-success rounded-pill px-4 py-2 mb-2"
+            onclick="graficarCarnot()"
+          >
+            Generar Gráfico
+          </button>
+          <button
+            class="btn btn-outline-success rounded-pill px-4 py-2 mb-2"
+            onclick="mostrarResultados()"
+          >
+            Mostrar Parámetros Calculados
+          </button>
+        </div>
+      </div>
+      <div class="card shadow-lg p-4 mb-4 bg-green-light text-green-dark">
+        <div
+          id="grafico"
+          style="width: 100%; max-width: 800px; height: 600px; margin: auto"
+        ></div>
+      </div>
+      <div class="card shadow-lg p-4 mb-4 bg-green-light text-green-dark">
+        <div id="resultados" class="resultados-carnot"></div>
+        <div class="carnot-formulas mt-3"></div>
+      </div>
+      <div class="card shadow-lg p-4 mb-4 bg-green-light text-green-dark">
+        <h3 class="text-center text-green-vivid mb-3">
+          Simulación del Pistón de Carnot
+        </h3>
+        <canvas
+          id="pistonCanvas"
+          width="400"
+          height="320"
+          class="d-block mx-auto mb-3"
+        ></canvas>
+        <div class="text-center small text-green-dark">
+          Animación visual de las etapas del ciclo de Carnot: expansión y
+          compresión isotérmica y adiabática, con partículas rebotando dentro
+          del cilindro.<br />
+          La placa fría se muestra en azul durante la compresión isotérmica.
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const gases = {
+        // Monoatomic
+        He: {
+          pesoMol: 4.002,
+          tipo: "monoatomic",
+          cp: (5 / 2) * 8.314,
+          cv: (3 / 2) * 8.314,
+        },
+        Ne: {
+          pesoMol: 20.18,
+          tipo: "monoatomic",
+          cp: (5 / 2) * 8.314,
+          cv: (3 / 2) * 8.314,
+        },
+        Ar: {
+          pesoMol: 39.948,
+          tipo: "monoatomic",
+          cp: (5 / 2) * 8.314,
+          cv: (3 / 2) * 8.314,
+        },
+        Kr: {
+          pesoMol: 83.798,
+          tipo: "monoatomic",
+          cp: (5 / 2) * 8.314,
+          cv: (3 / 2) * 8.314,
+        },
+        Xe: {
+          pesoMol: 131.293,
+          tipo: "monoatomic",
+          cp: (5 / 2) * 8.314,
+          cv: (3 / 2) * 8.314,
+        },
+        // Diatomic
+        H2: {
+          pesoMol: 2.016,
+          tipo: "diatomic",
+          cp: (7 / 2) * 8.314,
+          cv: (5 / 2) * 8.314,
+        },
+        N2: {
+          pesoMol: 28.014,
+          tipo: "diatomic",
+          cp: (7 / 2) * 8.314,
+          cv: (5 / 2) * 8.314,
+        },
+        O2: {
+          pesoMol: 32.0,
+          tipo: "diatomic",
+          cp: (7 / 2) * 8.314,
+          cv: (5 / 2) * 8.314,
+        },
+        CO: {
+          pesoMol: 28.01,
+          tipo: "diatomic",
+          cp: (7 / 2) * 8.314,
+          cv: (5 / 2) * 8.314,
+        },
+        HCl: {
+          pesoMol: 36.461,
+          tipo: "diatomic",
+          cp: (7 / 2) * 8.314,
+          cv: (5 / 2) * 8.314,
+        },
+        F2: {
+          pesoMol: 37.996,
+          tipo: "diatomic",
+          cp: (7 / 2) * 8.314,
+          cv: (5 / 2) * 8.314,
+        },
+        // Triatomic
+        CO2: {
+          pesoMol: 44.01,
+          tipo: "triatomic",
+          cp: (8 / 2) * 8.314,
+          cv: (6 / 2) * 8.314,
+        },
+        H2O: {
+          pesoMol: 18.015,
+          tipo: "triatomic",
+          cp: (8 / 2) * 8.314,
+          cv: (6 / 2) * 8.314,
+        },
+        SO2: {
+          pesoMol: 64.066,
+          tipo: "triatomic",
+          cp: (8 / 2) * 8.314,
+          cv: (6 / 2) * 8.314,
+        },
+      };
+
+      let valores = {};
+
+      function graficarCarnot() {
+        const R = 8.314;
+        const T_alta = parseFloat(document.getElementById("T_alta").value);
+        const T_baja = parseFloat(document.getElementById("T_baja").value);
+        const V1_L = parseFloat(document.getElementById("V1").value);
+        const V2_L = parseFloat(document.getElementById("V2").value);
+        const cantidad = parseFloat(document.getElementById("cantidad").value);
+        const unidad = document.querySelector(
+          'input[name="unidad"]:checked'
+        ).value;
+        const gas = document.getElementById("gas").value;
+        const gasData = gases[gas];
+        const gamma = gasData.cp / gasData.cv;
+        const n = unidad === "gramos" ? cantidad / gasData.pesoMol : cantidad;
+        const steps = 100;
+
+        // Validate inputs
+        if (
+          isNaN(T_alta) ||
+          isNaN(T_baja) ||
+          isNaN(V1_L) ||
+          isNaN(V2_L) ||
+          isNaN(n)
+        ) {
+          alert("Por favor, ingresa todos los valores numéricos.");
+          return;
+        }
+        if (T_alta <= T_baja) {
+          alert("T_alta debe ser mayor que T_baja.");
+          return;
+        }
+        if (V2_L <= V1_L) {
+          alert("V2 debe ser mayor que V1.");
+          return;
+        }
+
+        // Convert volumes to m³
+        const V1_m3 = V1_L / 1000;
+        const V2_m3 = V2_L / 1000;
+
+        // Calculate V3 using adiabatic process 2-3: T_baja/T_alta = (V2/V3)^(gamma-1)
+        const V3_m3 = V2_m3 * Math.pow(T_alta / T_baja, 1 / (gamma - 1));
+        const V3_L = V3_m3 * 1000;
+
+        // Calculate V4 using adiabatic process 4-1: T_alta/T_baja = (V4/V1)^(gamma-1)
+        const V4_m3 = V1_m3 * Math.pow(T_alta / T_baja, 1 / (gamma - 1));
+        const V4_L = V4_m3 * 1000;
+
+        // Validate V1 < V4 < V3
+        if (!(V1_L < V4_L && V4_L < V3_L)) {
+          alert("Los volúmenes deben cumplir: V1 < V4 < V3. Ajusta V1 o V2.");
+          return;
+        }
+
+        // Calculate pressures using ideal gas law: P = nRT/V
+        const P1 = (n * R * T_alta) / V1_m3;
+        const P2 = (n * R * T_alta) / V2_m3;
+        const P3 = (n * R * T_baja) / V3_m3;
+        const P4 = (n * R * T_baja) / V4_m3;
+
+        // Calculate efficiency: η = 1 - T_baja/T_alta
+        const eta = 1 - T_baja / T_alta;
+
+        // Calculate Q1: Q1 = nRT_alta ln(V2/V1)
+        const Q1 = n * R * T_alta * Math.log(V2_L / V1_L);
+
+        // Calculate Q2: Q2 = nRT_baja ln(V4/V3) (negative for heat out)
+        const Q2 = n * R * T_baja * Math.log(V4_L / V3_L);
+
+        // Calculate work: W = -η * Q1
+        const W_ciclo = -eta * Q1;
+
+        valores = {
+          T_alta,
+          T_baja,
+          V1_L,
+          V2_L,
+          V3_L,
+          V4_L,
+          P1,
+          P2,
+          P3,
+          P4,
+          eta,
+          Q1,
+          Q2,
+          W_ciclo,
+          gamma,
+          gasTipo: gasData.tipo,
+          n,
+        };
+
+        // Generate points for P-V diagram
+        const linspace = (a, b, N) =>
+          Array.from({ length: N }, (_, i) => a + (i / (N - 1)) * (b - a));
+
+        // Isothermal expansion (1-2)
+        const V_AB = linspace(V1_L, V2_L, steps);
+        const P_AB = V_AB.map((V) => (n * R * T_alta) / (V / 1000));
+
+        // Adiabatic expansion (2-3)
+        const V_BC = linspace(V2_L, V3_L, steps);
+        const P_BC = V_BC.map((V) => P2 * Math.pow(V2_L / V, gamma));
+
+        // Isothermal compression (3-4)
+        const V_CD = linspace(V3_L, V4_L, steps);
+        const P_CD = V_CD.map((V) => (n * R * T_baja) / (V / 1000));
+
+        // Adiabatic compression (4-1)
+        const V_DA = linspace(V4_L, V1_L, steps);
+        const P_DA = V_DA.map((V) => P4 * Math.pow(V4_L / V, gamma));
+
+        // Traces for the cycle
+        const traceAB = {
+          x: V_AB,
+          y: P_AB,
+          name: "Expansión isotérmica (Q₁ entra)",
+          line: { color: "red" },
+          text: ["Expansión"],
+          hoverinfo: "x+y+text",
+        };
+        const traceBC = {
+          x: V_BC,
+          y: P_BC,
+          name: "Expansión adiabática",
+          line: { color: "black", dash: "dot" },
+          text: ["Expansión"],
+          hoverinfo: "x+y+text",
+        };
+        const traceCD = {
+          x: V_CD,
+          y: P_CD,
+          name: "Compresión isotérmica (Q₂ sale)",
+          line: { color: "blue" },
+          text: ["Compresión"],
+          hoverinfo: "x+y+text",
+        };
+        const traceDA = {
+          x: V_DA,
+          y: P_DA,
+          name: "Compresión adiabática",
+          line: { color: "black", dash: "dot" },
+          text: ["Compresión"],
+          hoverinfo: "x+y+text",
+        };
+
+        // Points for labeling (1, 2, 3, 4)
+        const tracePoints = {
+          x: [V1_L, V2_L, V3_L, V4_L],
+          y: [P1, P2, P3, P4],
+          mode: "markers+text",
+          name: "Puntos",
+          text: ["1", "2", "3", "4"],
+          textposition: "top center",
+          marker: { size: 8, color: "black" },
+          showlegend: false,
+        };
+
+        // Arrows for Q1 (in) and Q2 (out)
+        const annotations = [
+          {
+            x: (V1_L + V2_L) / 2,
+            y: P_AB[Math.floor(steps / 2)],
+            xref: "x",
+            yref: "y",
+            text: "Q₁ (entra)",
+            showarrow: true,
+            arrowhead: 2,
+            ax: -20,
+            ay: -30,
+            font: { color: "red", size: 12 },
+          },
+          {
+            x: (V3_L + V4_L) / 2,
+            y: P_CD[Math.floor(steps / 2)],
+            xref: "x",
+            yref: "y",
+            text: "Q₂ (sale)",
+            showarrow: true,
+            arrowhead: 2,
+            ax: 20,
+            ay: 30,
+            font: { color: "blue", size: 12 },
+          },
+        ];
+
+        const layout = {
+          title: "Ciclo de Carnot (P vs V, volúmenes en litros)",
+          xaxis: { title: "Volumen (L)" },
+          yaxis: { title: "Presión (Pa)" },
+          showlegend: true,
+          annotations: annotations,
+        };
+
+        Plotly.newPlot(
+          "grafico",
+          [traceAB, traceBC, traceCD, traceDA, tracePoints],
+          layout
+        );
+
+        // Update formulas display
+        document.querySelector(".carnot-formulas").innerHTML = `
+          <b>Fórmulas del ciclo de Carnot:</b>
+          <ul>
+            <li>γ = C_p / C_v = ${gamma.toFixed(3)}</li>
+            <li>V₃ = V₂ × (T_alta / T_baja)^(1/(γ-1))</li>
+            <li>V₄ = V₁ × (T_alta / T_baja)^(1/(γ-1))</li>
+            <li>P = nRT / V</li>
+            <li>η = 1 - T_baja / T_alta</li>
+            <li>Q₁ = nRT_alta ln(V₂/V₁)</li>
+            <li>Q₂ = nRT_baja ln(V₄/V₃)</li>
+            <li>W = -η × Q₁</li>
+          </ul>
+        `;
+
+        // Update volumes for piston animation
+        window.volumenes = [V1_L, V2_L, V3_L, V4_L, V1_L];
+      }
+
+      function mostrarResultados() {
+        if (!valores.T_alta) {
+          alert("Primero presiona 'Generar Gráfico'");
+          return;
+        }
+
+        document.getElementById("resultados").innerHTML = `
+          <strong>Parámetros calculados:</strong><br>
+          Gas: <b>${document.getElementById("gas").value} (${
+          valores.gasTipo
+        })</b><br>
+          γ = <b>${valores.gamma.toFixed(3)}</b><br>
+          T_alta = <b>${valores.T_alta.toFixed(2)} K</b><br>
+          T_baja = <b>${valores.T_baja.toFixed(2)} K</b><br>
+          V₁ = <b>${valores.V1_L.toFixed(2)} L</b><br>
+          V₂ = <b>${valores.V2_L.toFixed(2)} L</b><br>
+          V₃ = <b>${valores.V3_L.toFixed(2)} L</b><br>
+          V₄ = <b>${valores.V4_L.toFixed(2)} L</b><br>
+          P₁ = <b>${valores.P1.toFixed(2)} Pa</b><br>
+          P₂ = <b>${valores.P2.toFixed(2)} Pa</b><br>
+          P₃ = <b>${valores.P3.toFixed(2)} Pa</b><br>
+          P₄ = <b>${valores.P4.toFixed(2)} Pa</b><br>
+          <hr>
+          <strong>Resultados:</strong><br>
+          Moles (n): <b>${valores.n.toFixed(4)}</b><br>
+          Eficiencia (η): <b>${(valores.eta * 100).toFixed(2)}%</b><br>
+          Calor Q₁ (entra): <b>${valores.Q1.toFixed(2)} J</b><br>
+          Calor Q₂ (sale): <b>${valores.Q2.toFixed(2)} J</b><br>
+          Trabajo del ciclo (W): <b>${valores.W_ciclo.toFixed(2)} J</b>
+        `;
+      }
+
+      // Piston animation
+      (function () {
+        let pistonAnimFrame = null;
+
+        function simularPiston() {
+          if (pistonAnimFrame) cancelAnimationFrame(pistonAnimFrame);
+
+          const canvas = document.getElementById("pistonCanvas");
+          if (!canvas) return;
+          const ctx = canvas.getContext("2d");
+
+          const vols =
+            window.volumenes && window.volumenes.length === 5
+              ? window.volumenes
+              : [10, 25, 40, 25, 10];
+
+          const etapas = [
+            {
+              nombre: "Expansión isotérmica",
+              color: "#e74c3c",
+              placa: "caliente",
+            },
+            { nombre: "Expansión adiabática", color: "#ffb347", placa: null },
+            {
+              nombre: "Compresión isotérmica",
+              color: "#1e90ff",
+              placa: "fria",
+            },
+            { nombre: "Compresión adiabática", color: "#43e97b", placa: null },
+          ];
+
+          let etapa = 0;
+          let t = 0;
+          const duracionEtapa = 80;
+          let particulas = [];
+
+          function resetParticulas(vol) {
+            particulas = [];
+            const area = getCilindroArea(vol);
+            for (let i = 0; i < 20; i++) {
+              particulas.push({
+                x: area.x + 10 + Math.random() * (area.w - 20),
+                y: area.y + 10 + Math.random() * (area.h - 20),
+                vx: (Math.random() - 0.5) * 1.2,
+                vy: (Math.random() - 0.5) * 1.2,
+                radio: 4 + Math.random() * 2,
+              });
+            }
+          }
+
+          function getCilindroArea(vol) {
+            const minH = 60,
+              maxH = 220;
+            const minV = Math.min(...vols),
+              maxV = Math.max(...vols);
+            const h = minH + ((maxH - minH) * (vol - minV)) / (maxV - minV);
+            return { x: 120, y: 300 - h, w: 160, h: h };
+          }
+
+          function draw(vol, etapaObj) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const area = getCilindroArea(vol);
+
+            ctx.save();
+            ctx.strokeStyle = "#888";
+            ctx.lineWidth = 5;
+            ctx.strokeRect(area.x, area.y, area.w, area.h);
+            ctx.restore();
+
+            if (etapaObj.placa === "fria") {
+              ctx.save();
+              ctx.fillStyle = "#1e90ff";
+              ctx.fillRect(area.x, area.y - 28, area.w, 16);
+              ctx.font = "bold 13px Arial";
+              ctx.fillStyle = "#fff";
+              ctx.textAlign = "center";
+              ctx.fillText("Placa fría", area.x + area.w / 2, area.y - 16);
+              ctx.restore();
+            }
+
+            ctx.save();
+            ctx.fillStyle = "#aaa";
+            ctx.fillRect(area.x, area.y - 10, area.w, 12);
+            ctx.restore();
+
+            for (let p of particulas) {
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.radio, 0, 2 * Math.PI);
+              ctx.fillStyle = etapaObj.placa === "fria" ? "#1e90ff" : "#e74c3c";
+              ctx.globalAlpha = 0.8;
+              ctx.fill();
+              ctx.restore();
+            }
+
+            ctx.save();
+            ctx.font = "bold 16px Arial";
+            ctx.fillStyle = etapaObj.color;
+            ctx.fillText(etapaObj.nombre, 20, 30);
+            ctx.restore();
+
+            ctx.save();
+            ctx.font = "bold 15px Arial";
+            ctx.fillStyle = "#222";
+            const T_alta = parseFloat(document.getElementById("T_alta").value);
+            const T_baja = parseFloat(document.getElementById("T_baja").value);
+            ctx.fillText(`T_alta = ${T_alta.toFixed(2)} K`, 260, 30);
+            ctx.fillText(`T_baja = ${T_baja.toFixed(2)} K`, 260, 50);
+            ctx.restore();
+          }
+
+          function updateParticulas(vol) {
+            const area = getCilindroArea(vol);
+            for (let p of particulas) {
+              p.x += p.vx;
+              p.y += p.vy;
+              if (p.x < area.x + p.radio) {
+                p.x = area.x + p.radio;
+                p.vx *= -1;
+              }
+              if (p.x > area.x + area.w - p.radio) {
+                p.x = area.x + area.w - p.radio;
+                p.vx *= -1;
+              }
+              if (p.y < area.y + p.radio) {
+                p.y = area.y + p.radio;
+                p.vy *= -1;
+              }
+              if (p.y > area.y + area.h - p.radio) {
+                p.y = area.y + area.h - p.radio;
+                p.vy *= -1;
+              }
+            }
+          }
+
+          function animar() {
+            const etapaObj = etapas[etapa];
+            const v0 = vols[etapa],
+              v1 = vols[etapa + 1];
+            const vol = v0 + ((v1 - v0) * t) / duracionEtapa;
+            if (t === 0) resetParticulas(vol);
+            updateParticulas(vol);
+            draw(vol, etapaObj);
+
+            t++;
+            if (t > duracionEtapa) {
+              etapa = (etapa + 1) % 4;
+              t = 0;
+            }
+            pistonAnimFrame = requestAnimationFrame(animar);
+          }
+
+          animar();
+        }
+
+        window.addEventListener("DOMContentLoaded", simularPiston);
+      })();
+    </script>
+  </body>
+</html>
